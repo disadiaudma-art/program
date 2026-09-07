@@ -5,7 +5,7 @@ export default function Footer() {
         <div className="footer-info">
           <div className="footer-logo">
             <i className="fa-solid fa-star-and-crescent"></i>
-            <span>Malayora Peruma • U.Ve. 2026 <small className="ml-sub">മലയോര പെരുമ</small></span>
+            <span>Malayora Peruma • Ma.Pe. 2026 <small className="ml-sub">മലയോര പെരുമ</small></span>
           </div>
           <p>IUML Malayora Zone Committee</p>
           <small>Kodom-Belur | Balal | Kinanoor-Karinthalam Panchayats</small>

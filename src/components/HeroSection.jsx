@@ -34,7 +34,7 @@ export default function HeroSection({ onOpenPoster }) {
               </div>
               <div className="cloud-inner-box">
                 <div className="cloud-header-motif"><i className="fa-solid fa-heart"></i></div>
-                <h2 className="cloud-main-uve">U.Pe. <small className="ml-sub">ഉ.പെ.</small></h2>
+                <h2 className="cloud-main-uve">Ma.Pe. <small className="ml-sub">മ.പെ.</small></h2>
                 <div className="cloud-year-2026">2026</div>
                 <div className="cloud-sub-peruma">Malayora Peruma <small className="ml-sub">മലയോര പെരുമ</small></div>
               </div>

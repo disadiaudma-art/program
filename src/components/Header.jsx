@@ -17,7 +17,7 @@ export default function Header() {
           </div>
           <div className="brand-titles">
             <span className="brand-sub-badge">
-              Malayora Peruma • U.Pe. 2026 <span className="ml-sub">മലയോര പെരുമ</span>
+              Malayora Peruma • Ma.Pe. 2026 <span className="ml-sub">മലയോര പെരുമ</span>
             </span>
             <h1 className="brand-main-title">
               IUML Malayora Zone <span className="ml-sub header-ml">മുസ്‌ലിം ലീഗ് മലയോര മേഖല</span>

@@ -897,6 +897,15 @@ button, input, select, textarea {
   background: #f0faf3;
 }
 
+.drop-zone.has-error {
+  border-color: var(--c-danger) !important;
+  background-color: #fff8f8 !important;
+}
+
+.photo-upload-section.has-error {
+  border-color: rgba(220, 53, 69, 0.4);
+}
+
 .file-hidden-input {
   display: none;
 }

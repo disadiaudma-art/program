@@ -29,6 +29,7 @@ export default function RegistrationForm({ onSuccess }) {
   const [photo, setPhoto] = useState(null)
   const [photoPreview, setPhotoPreview] = useState(null)
   const [photoUploading, setPhotoUploading] = useState(false)
+  const [photoError, setPhotoError] = useState('')
   const [dragOver, setDragOver] = useState(false)
   const fileInputRef = useRef()
   const cameraInputRef = useRef()
@@ -69,6 +70,14 @@ export default function RegistrationForm({ onSuccess }) {
       newErrors[k] = err
       if (err) valid = false
     })
+
+    if (!photo) {
+      setPhotoError('Please upload a delegate photo (ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യുക നിർബന്ധമാണ്)')
+      valid = false
+    } else {
+      setPhotoError('')
+    }
+
     setErrors(newErrors)
     setTouched(Object.keys(form).reduce((a,k)=>({...a,[k]:true}),{}))
     return valid
@@ -77,6 +86,15 @@ export default function RegistrationForm({ onSuccess }) {
   // ── Photo Handling ──────────────────────────────────────────────────────────
   function handlePhotoFile(file) {
     if (!file) return
+    if (!file.type.startsWith('image/')) {
+      setPhotoError('Please select a valid image file (JPEG, PNG, WebP) / ശരിയായ ചിത്രം തിരഞ്ഞെടുക്കുക')
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setPhotoError('Photo size must be less than 5MB / ഫോട്ടോ 5MB-ൽ താഴെയായിരിക്കണം')
+      return
+    }
+    setPhotoError('')
     setPhotoPreview(URL.createObjectURL(file))
     setPhoto(file)
   }
@@ -86,13 +104,19 @@ export default function RegistrationForm({ onSuccess }) {
     e.preventDefault(); setDragOver(false)
     handlePhotoFile(e.dataTransfer.files[0])
   }
-  function clearPhoto() { setPhoto(null); setPhotoPreview(null) }
+  function clearPhoto() {
+    setPhoto(null)
+    setPhotoPreview(null)
+    setPhotoError('Please upload a delegate photo (ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യുക നിർബന്ധമാണ്)')
+    if (fileInputRef.current) fileInputRef.current.value = ''
+    if (cameraInputRef.current) cameraInputRef.current.value = ''
+  }
 
   // ── Submit ──────────────────────────────────────────────────────────────────
   async function handleSubmit(e) {
     e.preventDefault()
     if (!validateAll()) {
-      const firstErr = document.querySelector('.form-group.has-error')
+      const firstErr = document.querySelector('.form-group.has-error, .photo-upload-section.has-error')
       if (firstErr) firstErr.scrollIntoView({ behavior:'smooth', block:'center' })
       return
     }
@@ -101,15 +125,26 @@ export default function RegistrationForm({ onSuccess }) {
     try {
       let photoUrl = null, photoPublicId = null
 
-      if (photo) {
-        setPhotoUploading(true)
-        try {
-          const res = await uploadPhoto(photo)
-          photoUrl = res.data.url
-          photoPublicId = res.data.publicId
-        } catch (_) { /* Photo upload failed — continue without it */ }
-        setPhotoUploading(false)
+      if (!photo) {
+        setPhotoError('Please upload a delegate photo (ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യുക നിർബന്ധമാണ്)')
+        setSubmitting(false)
+        return
       }
+
+      setPhotoUploading(true)
+      try {
+        const res = await uploadPhoto(photo)
+        photoUrl = res.data.url
+        photoPublicId = res.data.publicId
+      } catch (uploadErr) {
+        setPhotoUploading(false)
+        setSubmitting(false)
+        setPhotoError('Photo upload failed. Please try again. (ഫോട്ടോ അപ്‌ലോഡ് പരാജയപ്പെട്ടു)')
+        const errorMsg = uploadErr.response?.data?.message || uploadErr.message || 'Photo upload failed'
+        alert(`Failed to upload photo: ${errorMsg}. Please try again.`)
+        return
+      }
+      setPhotoUploading(false)
 
       const panchayatVal = form.panchayat === 'Other' ? (form.customPanchayat?.trim() || 'Other') : form.panchayat
       const unitVal = form.unit === 'Other' ? (form.customUnit?.trim() || 'Other') : form.unit
@@ -130,7 +165,11 @@ export default function RegistrationForm({ onSuccess }) {
       setForm(initForm)
       setErrors(initErrors)
       setTouched({})
-      clearPhoto()
+      setPhoto(null)
+      setPhotoPreview(null)
+      setPhotoError('')
+      if (fileInputRef.current) fileInputRef.current.value = ''
+      if (cameraInputRef.current) cameraInputRef.current.value = ''
     } catch (err) {
       const msg = err.response?.data?.errors?.[0]?.msg || err.response?.data?.message || 'Submission failed. Please try again.'
       alert(msg)
@@ -157,8 +196,8 @@ export default function RegistrationForm({ onSuccess }) {
             <span className="form-title-ml ml-sub">കുടുംബ സംഗമം ഡെലിഗേറ്റ് വിവരങ്ങൾ</span>
           </h2>
           <p className="form-header-subtitle">
-            Please fill in the 8 required details below to complete your registration.
-            <span className="ml-sub d-block">താഴെ നൽകിയിരിക്കുന്ന 8 വിവരങ്ങൾ കൃത്യമായി പൂരിപ്പിച്ച് സമർപ്പിക്കുക.</span>
+            Please fill in all required details and upload your photo to complete your registration.
+            <span className="ml-sub d-block">വിവരങ്ങൾ കൃത്യമായി പൂരിപ്പിച്ച് ഫോട്ടോ അപ്‌ലോഡ് ചെയ്തു സമർപ്പിക്കുക.</span>
           </p>
         </div>
 
@@ -350,19 +389,21 @@ export default function RegistrationForm({ onSuccess }) {
           </div>
 
           {/* SECTION 4: Photo Upload (Cloudinary) */}
-          <div className="form-section">
+          <div className={`form-section photo-upload-section${photoError ? ' has-error' : ''}`}>
             <div className="section-badge-bar">
               <span className="step-circle">4</span>
               <div className="section-title-wrap">
-                <h3 className="section-title-en">Delegate Photo <span style={{fontWeight:400,fontSize:'0.9rem'}}>(Optional)</span></h3>
-                <small className="section-sub-ml ml-sub">ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യുക (ഐഛിക)</small>
+                <h3 className="section-title-en">
+                  Delegate Photo <span className="req">*</span>
+                </h3>
+                <small className="section-sub-ml ml-sub">ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യുക (നിർബന്ധം)</small>
               </div>
             </div>
             <div className="photo-upload-container">
               <div>
                 {!photoPreview ? (
                   <div
-                    className={`drop-zone${dragOver ? ' drag-over' : ''}`}
+                    className={`drop-zone${dragOver ? ' drag-over' : ''}${photoError ? ' has-error' : ''}`}
                     onClick={() => fileInputRef.current.click()}
                     onDragOver={e => { e.preventDefault(); setDragOver(true) }}
                     onDragLeave={() => setDragOver(false)}
@@ -372,7 +413,7 @@ export default function RegistrationForm({ onSuccess }) {
                     <input ref={cameraInputRef} type="file" accept="image/*" capture="user" className="file-hidden-input" onChange={handleFileInput}/>
                     <div className="drop-zone-idle">
                       <div className="upload-avatar-circle"><i className="fa-solid fa-camera-retro"></i></div>
-                      <h4>Upload Delegate Photo</h4>
+                      <h4>Upload Delegate Photo <span className="req">*</span></h4>
                       <p>Drag &amp; drop or click to browse<br/><span className="ml-sub">ഫോട്ടോ ഇവിടെ ഇടുക</span></p>
                       <div className="photo-btns-row">
                         <button type="button" className="btn btn-outline btn-sm" onClick={e => { e.stopPropagation(); fileInputRef.current.click() }}>
@@ -401,16 +442,13 @@ export default function RegistrationForm({ onSuccess }) {
                     </div>
                   </div>
                 )}
+                {photoError && (
+                  <span className="field-error photo-field-error" style={{ display: 'block', marginTop: '10px' }}>
+                    {photoError}
+                  </span>
+                )}
               </div>
-              <div className="photo-tips-card">
-                <h4><i className="fa-solid fa-lightbulb text-green"></i> Photo Guidelines</h4>
-                <ul>
-                  <li><i className="fa-solid fa-check text-green"></i> Clear face photo, passport-style</li>
-                  <li><i className="fa-solid fa-check text-green"></i> Good lighting, plain background</li>
-                  <li><i className="fa-solid fa-check text-green"></i> JPEG, PNG or WebP, max 5MB</li>
-                  <li><i className="fa-solid fa-check text-green"></i> Stored securely on Cloudinary CDN</li>
-                </ul>
-              </div>
+              
             </div>
           </div>
 

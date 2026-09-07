@@ -37,9 +37,7 @@ export default function Header() {
               <small className="ml-sub countdown-ml">{displayMl || 'സെപ്റ്റംബർ 26, 2026'}</small>
             </div>
           </div>
-          <Link to="/admin" className="btn btn-admin-nav btn-sm">
-            <i className="fa-solid fa-table-list"></i> Admin
-          </Link>
+         
         </div>
       </div>
     </header>

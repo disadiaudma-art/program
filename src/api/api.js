@@ -1,7 +1,10 @@
 import axios from 'axios'
 
+//  FIX: Checks if an environment variable is set on Vercel, otherwise falls back to local or relative path
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: BASE_URL,
   headers: { 'Content-Type': 'application/json' },
 })
 

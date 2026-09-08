@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { submitDelegate, uploadPhoto } from '../api/api'
-
+import DelegatePhotoFrame from './DelegatePhotoFrame'
 
 const PANCHAYATS = [
   { value: 'കോടോംബേളൂർ', label: 'കോടോംബേളൂർ (Kodom-Belur)' },
@@ -18,8 +18,8 @@ const BRANCHES = [
   { value: 'കല്ലഞ്ചിറ', label: '7. കല്ലഞ്ചിറ (Kallanchira)' },
 ]
 
-const initForm = { fullName:'', age:'', mobileNumber:'', place:'', panchayat:'', unit:'', customUnit:'', work:'', qualification:'' }
-const initErrors = { fullName:'', age:'', mobileNumber:'', place:'', panchayat:'', unit:'', work:'', qualification:'' }
+const initForm = { fullName:'', age:'', mobileNumber:'', place:'', panchayat:'', unit:'', customPanchayat:'', customUnit:'', work:'', qualification:'' }
+const initErrors = { fullName:'', age:'', mobileNumber:'', place:'', panchayat:'', unit:'', customPanchayat:'', customUnit:'' }
 
 export default function RegistrationForm({ onSuccess }) {
   const [form, setForm] = useState(initForm)
@@ -34,17 +34,18 @@ export default function RegistrationForm({ onSuccess }) {
   const fileInputRef = useRef()
   const cameraInputRef = useRef()
 
-  // ── Validation ──────────────────────────────────────────────────────────────
+  // ── Validation: Only Personal & Contact, Location & Unit are required ───────
   function validate(name, value) {
     switch (name) {
       case 'fullName': return value.trim().length >= 2 ? '' : 'Please enter full name (ദയവായി പേര് രേഖപ്പെടുത്തുക)'
       case 'age': return Number(value) >= 5 && Number(value) <= 115 ? '' : 'Enter valid age 5–115 (ശരിയായ വയസ്സ് നൽകുക)'
       case 'mobileNumber': return /^[6-9]\d{9}$/.test(value.replace(/\D/g,'')) ? '' : 'Enter valid 10-digit number (10 അക്ക മൊബൈൽ നമ്പർ നൽകുക)'
       case 'place': return value.trim().length >= 2 ? '' : 'Please enter your place (ദയവായി സ്ഥലം രേഖപ്പെടുത്തുക)'
-      case 'panchayat': return value.trim().length >= 2 ? '' : 'Please enter panchayat (ദയവായി പഞ്ചായത്ത് രേഖപ്പെടുത്തുക)'
-      case 'unit': return value.trim().length >= 2 ? '' : 'Please enter your unit (യൂണിറ്റ് രേഖപ്പെടുത്തുക)'
-      case 'work': return value.trim().length >= 2 ? '' : 'Please enter work / occupation (തൊഴിൽ രേഖപ്പെടുത്തുക)'
-      case 'qualification': return value.trim().length >= 2 ? '' : 'Please enter qualification (വിദ്യാഭ്യാസ യോഗ്യത രേഖപ്പെടുത്തുക)'
+      case 'panchayat': return value.trim().length >= 2 ? '' : 'Please select panchayat (ദയവായി പഞ്ചായത്ത് തിരഞ്ഞെടുക്കുക)'
+      case 'unit': return value.trim().length >= 2 ? '' : 'Please select unit (ശാഖ തിരഞ്ഞെടുക്കുക)'
+      case 'customPanchayat': return form.panchayat === 'Other' && (!value || !value.trim()) ? 'Please enter panchayat name' : ''
+      case 'customUnit': return form.unit === 'Other' && (!value || !value.trim()) ? 'Please enter branch/unit name' : ''
+      // work, qualification, and photo are optional - no errors
       default: return ''
     }
   }
@@ -63,23 +64,20 @@ export default function RegistrationForm({ onSuccess }) {
   }
 
   function validateAll() {
+    const requiredKeys = ['fullName', 'age', 'mobileNumber', 'place', 'panchayat', 'unit']
+    if (form.panchayat === 'Other') requiredKeys.push('customPanchayat')
+    if (form.unit === 'Other') requiredKeys.push('customUnit')
+
     const newErrors = {}
     let valid = true
-    Object.keys(form).forEach(k => {
-      const err = validate(k, form[k])
+    requiredKeys.forEach(k => {
+      const err = validate(k, form[k] || '')
       newErrors[k] = err
       if (err) valid = false
     })
 
-    if (!photo) {
-      setPhotoError('Please upload a delegate photo (ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യുക നിർബന്ധമാണ്)')
-      valid = false
-    } else {
-      setPhotoError('')
-    }
-
     setErrors(newErrors)
-    setTouched(Object.keys(form).reduce((a,k)=>({...a,[k]:true}),{}))
+    setTouched(requiredKeys.reduce((a,k)=>({...a,[k]:true}),{}))
     return valid
   }
 
@@ -107,7 +105,7 @@ export default function RegistrationForm({ onSuccess }) {
   function clearPhoto() {
     setPhoto(null)
     setPhotoPreview(null)
-    setPhotoError('Please upload a delegate photo (ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യുക നിർബന്ധമാണ്)')
+    setPhotoError('')
     if (fileInputRef.current) fileInputRef.current.value = ''
     if (cameraInputRef.current) cameraInputRef.current.value = ''
   }
@@ -116,7 +114,7 @@ export default function RegistrationForm({ onSuccess }) {
   async function handleSubmit(e) {
     e.preventDefault()
     if (!validateAll()) {
-      const firstErr = document.querySelector('.form-group.has-error, .photo-upload-section.has-error')
+      const firstErr = document.querySelector('.form-group.has-error')
       if (firstErr) firstErr.scrollIntoView({ behavior:'smooth', block:'center' })
       return
     }
@@ -125,40 +123,38 @@ export default function RegistrationForm({ onSuccess }) {
     try {
       let photoUrl = null, photoPublicId = null
 
-      if (!photo) {
-        setPhotoError('Please upload a delegate photo (ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യുക നിർബന്ധമാണ്)')
-        setSubmitting(false)
-        return
-      }
-
-      setPhotoUploading(true)
-      try {
-        const res = await uploadPhoto(photo)
-        photoUrl = res.data.url
-        photoPublicId = res.data.publicId
-      } catch (uploadErr) {
+      if (photo) {
+        setPhotoUploading(true)
+        try {
+          const res = await uploadPhoto(photo)
+          photoUrl = res.data.url
+          photoPublicId = res.data.publicId
+        } catch (uploadErr) {
+          setPhotoUploading(false)
+          setSubmitting(false)
+          setPhotoError('Photo upload failed. You can remove photo or try again.')
+          const errorMsg = uploadErr.response?.data?.message || uploadErr.message || 'Photo upload failed'
+          alert(`Photo upload failed: ${errorMsg}. Please try again or remove the photo to submit.`)
+          return
+        }
         setPhotoUploading(false)
-        setSubmitting(false)
-        setPhotoError('Photo upload failed. Please try again. (ഫോട്ടോ അപ്‌ലോഡ് പരാജയപ്പെട്ടു)')
-        const errorMsg = uploadErr.response?.data?.message || uploadErr.message || 'Photo upload failed'
-        alert(`Failed to upload photo: ${errorMsg}. Please try again.`)
-        return
       }
-      setPhotoUploading(false)
 
       const panchayatVal = form.panchayat === 'Other' ? (form.customPanchayat?.trim() || 'Other') : form.panchayat
       const unitVal = form.unit === 'Other' ? (form.customUnit?.trim() || 'Other') : form.unit
 
       const payload = {
-        ...form,
+        fullName: form.fullName.trim(),
+        age: parseInt(form.age, 10),
+        mobileNumber: form.mobileNumber.trim(),
+        place: form.place.trim(),
         panchayat: panchayatVal,
         unit: unitVal,
-        age: parseInt(form.age, 10),
+        work: form.work?.trim() || '',
+        qualification: form.qualification?.trim() || '',
         photoUrl,
         photoPublicId,
       }
-      delete payload.customPanchayat
-      delete payload.customUnit
 
       const res = await submitDelegate(payload)
       onSuccess(res.data.data)
@@ -175,6 +171,7 @@ export default function RegistrationForm({ onSuccess }) {
       alert(msg)
     } finally {
       setSubmitting(false)
+      setPhotoUploading(false)
     }
   }
 
@@ -189,16 +186,11 @@ export default function RegistrationForm({ onSuccess }) {
         <div className="form-card-header">
           <div className="form-seal-badge">
             <i className="fa-solid fa-file-signature"></i>
-            <span>Delegate Registration 2026 <span className="ml-sub">പ്രതിനിധി രജിസ്ട്രേഷൻ</span></span>
+            <span>Delegate Registration 2026</span>
           </div>
           <h2 className="form-header-title">
             Delegate Registration Details
-            <span className="form-title-ml ml-sub">കുടുംബ സംഗമം ഡെലിഗേറ്റ് വിവരങ്ങൾ</span>
           </h2>
-          <p className="form-header-subtitle">
-            Please fill in all required details and upload your photo to complete your registration.
-            <span className="ml-sub d-block">വിവരങ്ങൾ കൃത്യമായി പൂരിപ്പിച്ച് ഫോട്ടോ അപ്‌ലോഡ് ചെയ്തു സമർപ്പിക്കുക.</span>
-          </p>
         </div>
 
         <form id="delegateForm" onSubmit={handleSubmit} noValidate autoComplete="off">
@@ -209,7 +201,7 @@ export default function RegistrationForm({ onSuccess }) {
               <span className="step-circle">1</span>
               <div className="section-title-wrap">
                 <h3 className="section-title-en">Personal &amp; Contact Information</h3>
-                <small className="section-sub-ml ml-sub">വ്യക്തിഗത &amp; സമ്പർക്ക വിവരങ്ങൾ (Name, Age, Mobile Number)</small>
+                <small className="section-sub-ml ml-sub"> (Name, Age, Mobile Number)</small>
               </div>
             </div>
             <div className="form-grid-3">
@@ -217,7 +209,7 @@ export default function RegistrationForm({ onSuccess }) {
               <div className={`${fg('fullName')} span-2`}>
                 <label htmlFor="fullName">
                   <span className="label-en">1. Full Name</span>
-                  <span className="label-ml ml-sub">പേര്</span>
+                  
                   <span className="req">*</span>
                 </label>
                 <div className="input-wrap">
@@ -232,7 +224,7 @@ export default function RegistrationForm({ onSuccess }) {
               <div className={fg('age')}>
                 <label htmlFor="age">
                   <span className="label-en">2. Age</span>
-                  <span className="label-ml ml-sub">വയസ്സ്</span>
+                  
                   <span className="req">*</span>
                 </label>
                 <div className="input-wrap">
@@ -247,7 +239,7 @@ export default function RegistrationForm({ onSuccess }) {
               <div className={`${fg('mobileNumber')} span-3`}>
                 <label htmlFor="mobileNumber">
                   <span className="label-en">3. Mobile Number</span>
-                  <span className="label-ml ml-sub">മൊബൈൽ നമ്പർ</span>
+                  
                   <span className="req">*</span>
                 </label>
                 <div className="input-wrap">
@@ -267,7 +259,7 @@ export default function RegistrationForm({ onSuccess }) {
               <span className="step-circle">2</span>
               <div className="section-title-wrap">
                 <h3 className="section-title-en">Location &amp; Organization Unit</h3>
-                <small className="section-sub-ml ml-sub">സ്ഥലവും സംഘടന ഘടകവും (Place, Panchayat, Unit)</small>
+                <small className="section-sub-ml ml-sub"></small>
               </div>
             </div>
             <div className="form-grid-3">
@@ -275,7 +267,7 @@ export default function RegistrationForm({ onSuccess }) {
               <div className={fg('place')}>
                 <label htmlFor="place">
                   <span className="label-en">4. Place / Locality</span>
-                  <span className="label-ml ml-sub">സ്ഥലം</span>
+                  
                   <span className="req">*</span>
                 </label>
                 <div className="input-wrap">
@@ -290,7 +282,7 @@ export default function RegistrationForm({ onSuccess }) {
               <div className={fg('panchayat')}>
                 <label htmlFor="panchayat">
                   <span className="label-en">5. Panchayat</span>
-                  <span className="label-ml ml-sub">പഞ്ചായത്ത്</span>
+                 
                   <span className="req">*</span>
                 </label>
                 <div className="input-wrap">
@@ -345,13 +337,15 @@ export default function RegistrationForm({ onSuccess }) {
             </div>
           </div>
 
-          {/* SECTION 3: Work & Qualification */}
+          {/* SECTION 3: Work & Qualification (Optional) */}
           <div className="form-section">
             <div className="section-badge-bar">
               <span className="step-circle">3</span>
               <div className="section-title-wrap">
-                <h3 className="section-title-en">Professional &amp; Educational Background</h3>
-                <small className="section-sub-ml ml-sub">തൊഴിലും വിദ്യാഭ്യാസ യോഗ്യതയും (Work, Highest Education)</small>
+                <h3 className="section-title-en">
+                  Professional &amp; Educational Background
+                  <span className="optional-badge">Optional / നിർബന്ധമില്ല</span>
+                </h3>
               </div>
             </div>
             <div className="form-grid-2">
@@ -359,8 +353,6 @@ export default function RegistrationForm({ onSuccess }) {
               <div className={fg('work')}>
                 <label htmlFor="work">
                   <span className="label-en">7. Work / Occupation</span>
-                  <span className="label-ml ml-sub">തൊഴിൽ</span>
-                  <span className="req">*</span>
                 </label>
                 <div className="input-wrap">
                   <i className="fa-solid fa-briefcase input-icon"></i>
@@ -368,14 +360,11 @@ export default function RegistrationForm({ onSuccess }) {
                     onChange={handleChange} onBlur={handleBlur}
                     placeholder="e.g. Business, Farmer, Private Job... (തൊഴിൽ രേഖപ്പെടുത്തുക)" />
                 </div>
-                {touched.work && errors.work && <span className="field-error">{errors.work}</span>}
               </div>
               {/* Qualification */}
               <div className={fg('qualification')}>
                 <label htmlFor="qualification">
                   <span className="label-en">8. Highest Educational Qualification</span>
-                  <span className="label-ml ml-sub">ഉയർന്ന വിദ്യാഭ്യാസ യോഗ്യത</span>
-                  <span className="req">*</span>
                 </label>
                 <div className="input-wrap">
                   <i className="fa-solid fa-graduation-cap input-icon"></i>
@@ -383,24 +372,26 @@ export default function RegistrationForm({ onSuccess }) {
                     onChange={handleChange} onBlur={handleBlur}
                     placeholder="e.g. SSLC, Plus Two, Degree... (വിദ്യാഭ്യാസ യോഗ്യത രേഖപ്പെടുത്തുക)" />
                 </div>
-                {touched.qualification && errors.qualification && <span className="field-error">{errors.qualification}</span>}
               </div>
             </div>
           </div>
 
-          {/* SECTION 4: Photo Upload (Cloudinary) */}
+          {/* SECTION 4: Photo Upload & Framed Picture */}
           <div className={`form-section photo-upload-section${photoError ? ' has-error' : ''}`}>
             <div className="section-badge-bar">
               <span className="step-circle">4</span>
               <div className="section-title-wrap">
                 <h3 className="section-title-en">
-                  Delegate Photo <span className="req">*</span>
+                  Delegate Photo &amp; Framed Picture
+                  <span className="optional-badge">Optional / നിർബന്ധമില്ല</span>
                 </h3>
-                <small className="section-sub-ml ml-sub">ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യുക (നിർബന്ധം)</small>
+                <small className="section-sub-ml ml-sub">പേരും ചിത്രവും ചേർത്ത ലൈവ് ഫ്രെയിം താഴെ കാണാം</small>
               </div>
             </div>
-            <div className="photo-upload-container">
-              <div>
+            
+            <div className="framed-photo-split-layout">
+              {/* Left Column: Upload Controls */}
+              <div className="framed-photo-upload-col">
                 {!photoPreview ? (
                   <div
                     className={`drop-zone${dragOver ? ' drag-over' : ''}${photoError ? ' has-error' : ''}`}
@@ -413,8 +404,8 @@ export default function RegistrationForm({ onSuccess }) {
                     <input ref={cameraInputRef} type="file" accept="image/*" capture="user" className="file-hidden-input" onChange={handleFileInput}/>
                     <div className="drop-zone-idle">
                       <div className="upload-avatar-circle"><i className="fa-solid fa-camera-retro"></i></div>
-                      <h4>Upload Delegate Photo <span className="req">*</span></h4>
-                      <p>Drag &amp; drop or click to browse<br/><span className="ml-sub">ഫോട്ടോ ഇവിടെ ഇടുക</span></p>
+                      <h4>Upload Delegate Photo</h4>
+                      <p>Drag &amp; drop or click to browse<br/><span className="ml-sub">ഫോട്ടോ ഇവിടെ ചേർക്കുക</span></p>
                       <div className="photo-btns-row">
                         <button type="button" className="btn btn-outline btn-sm" onClick={e => { e.stopPropagation(); fileInputRef.current.click() }}>
                           <i className="fa-solid fa-folder-open"></i> Browse File
@@ -433,11 +424,16 @@ export default function RegistrationForm({ onSuccess }) {
                         <div className="verified-checkmark"><i className="fa-solid fa-check"></i></div>
                       </div>
                       <div className="photo-badge-details">
-                        <div className="status-ready-pill"><i className="fa-solid fa-circle-check"></i> Photo Ready</div>
-                        <p className="photo-meta">Will be uploaded to Cloudinary on submission</p>
-                        <button type="button" className="btn-clear-photo" onClick={clearPhoto}>
-                          <i className="fa-solid fa-trash"></i> Remove Photo
-                        </button>
+                        <div className="status-ready-pill"><i className="fa-solid fa-circle-check"></i> Photo Selected</div>
+                        <p className="photo-meta">Displayed in your framed picture</p>
+                        <div className="photo-action-buttons">
+                          <button type="button" className="btn btn-outline btn-sm" onClick={() => fileInputRef.current.click()}>
+                            <i className="fa-solid fa-arrows-rotate"></i> Change
+                          </button>
+                          <button type="button" className="btn-clear-photo" onClick={clearPhoto}>
+                            <i className="fa-solid fa-trash"></i> Remove
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -448,7 +444,21 @@ export default function RegistrationForm({ onSuccess }) {
                   </span>
                 )}
               </div>
-              
+
+              {/* Right Column: Framed Picture */}
+              <div className="framed-photo-preview-col">
+                <div className="frame-preview-title">
+                  <i className="fa-solid fa-image-portrait"></i> Live Framed Picture
+                  <small className="ml-sub">(ഫ്രെയിം ചെയ്ത ചിത്രം)</small>
+                </div>
+                <DelegatePhotoFrame
+                  photoUrl={photoPreview}
+                  name={form.fullName}
+                  locality={form.place}
+                  unit={form.unit === 'Other' ? (form.customUnit || 'Other') : form.unit}
+                  showDownload={Boolean(photoPreview)}
+                />
+              </div>
             </div>
           </div>
 

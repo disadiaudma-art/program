@@ -11,7 +11,6 @@ export default function Footer() {
           <small>Kodom-Belur | Balal | Kinanoor-Karinthalam Panchayats</small>
         </div>
         <div className="footer-contact-details">
-          <div><i className="fa-solid fa-phone"></i> Helpline: 9847123456, 9447654321</div>
           <div><i className="fa-solid fa-location-dot"></i> Venue: Royal Palace Auditorium, Parappa</div>
           <div><i className="fa-regular fa-calendar-check"></i> Saturday, 26 September 2026</div>
         </div>

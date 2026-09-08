@@ -122,92 +122,99 @@ button, input, select, textarea {
 }
 
 /* ==========================================================================
-   HEADER & NAVIGATION
+/* ==========================================================================
+   HEADER & NAVIGATION (Transparent with Centered Timer)
    ========================================================================== */
 .site-header {
-  background: linear-gradient(135deg, var(--c-forest-dark) 0%, var(--c-forest-deep) 60%, #10482b 100%);
+  background: transparent;
   color: #ffffff;
-  padding: 14px 0;
-  position: sticky;
-  top: 0;
+  padding: 16px 0 10px 0;
+  position: relative;
   z-index: 100;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-  border-bottom: 3px solid var(--c-yellow);
+  box-shadow: none;
+  border-bottom: none;
 }
 
-.header-inner {
+.site-header.transparent-header {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.header-inner.header-center-only {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 15px;
-  flex-wrap: wrap;
-}
-
-.brand-group {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.flag-symbol-box {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  flex-shrink: 0;
-  display: flex;
-}
-
-.flag-svg {
+  justify-content: center;
   width: 100%;
-  height: 100%;
 }
 
-.brand-titles {
-  display: flex;
-  flex-direction: column;
-}
-
-.brand-sub-badge {
-  display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--c-yellow);
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-}
-
-.brand-main-title {
-  font-size: 1.35rem;
-  color: #ffffff;
-  font-weight: 800;
-  letter-spacing: -0.3px;
-}
-
-.brand-tagline {
-  font-size: 0.78rem;
-  color: #c4ded0;
-  font-weight: 500;
-}
-
-.header-actions {
-  display: flex;
+.header-timer-pill {
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  background: rgba(7, 37, 21, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(254, 195, 0, 0.65);
+  box-shadow: 0 8px 24px rgba(7, 37, 21, 0.2);
+  padding: 8px 24px;
+  border-radius: 50px;
+  transition: all 0.3s ease;
 }
 
-.countdown-tag {
+.header-timer-pill:hover {
+  border-color: var(--c-yellow);
+  box-shadow: 0 10px 28px rgba(7, 37, 21, 0.28);
+  transform: translateY(-1px);
+}
+
+.timer-pill-icon {
+  font-size: 1.25rem;
+  color: var(--c-yellow);
+}
+
+.timer-segments {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(254, 195, 0, 0.4);
-  padding: 6px 14px;
-  border-radius: 50px;
-  font-size: 0.82rem;
-  font-weight: 600;
+}
+
+.timer-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 36px;
+}
+
+.timer-num {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1;
+  font-family: monospace, var(--font-main);
+  letter-spacing: 0.5px;
+}
+
+.timer-lbl {
+  font-size: 0.6rem;
+  font-weight: 700;
   color: var(--c-yellow-bright);
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+.timer-sep {
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--c-yellow);
+  opacity: 0.75;
+  margin-bottom: 6px;
+}
+
+.timer-today-text {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--c-yellow);
 }
 
 /* Common Buttons */
@@ -290,251 +297,47 @@ button, input, select, textarea {
 }
 
 /* ==========================================================================
-   HERO SECTION (INSPIRED DIRECTLY BY POSTER.JPG)
+   HERO SECTION (ONLY MA.PE POSTER CARD)
    ========================================================================== */
 .poster-hero {
   position: relative;
   background: linear-gradient(180deg, #dcf0e1 0%, #eef7f1 100%);
-  padding: 40px 0 0 0;
+  padding: 10px 0 25px 0;
   overflow: hidden;
 }
 
-.hero-layout {
-  display: grid;
-  grid-template-columns: 460px 1fr;
-  gap: 40px;
-  align-items: center;
-  position: relative;
-  z-index: 2;
-  margin-bottom: 25px;
-}
-
-/* LEFT COLUMN: THE POSTER CREST CARD */
-.poster-crest-wrapper {
-  background: #ffffff;
-  border-radius: var(--radius-xl);
-  padding: 30px 24px;
-  box-shadow: var(--shadow-card);
-  border: 1px solid rgba(0, 135, 81, 0.15);
-  position: relative;
-  text-align: center;
+.hero-layout-single-card {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  transition: transform 0.3s ease;
-}
-
-.poster-crest-wrapper:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-hover);
-}
-
-/* Waving IUML Flag */
-.waving-flag-holder {
-  width: 140px;
-  height: 90px;
-  margin: -10px auto 10px auto;
-  filter: drop-shadow(0 6px 12px rgba(0, 135, 81, 0.3));
-}
-
-.waving-flag-svg {
   width: 100%;
-  height: 100%;
+  padding: 10px 0;
 }
 
-/* The Scalloped Dark-Green Badge from poster.jpg */
-.poster-cloud-badge {
-  position: relative;
-  background: var(--c-forest-badge);
-  background: radial-gradient(circle at center, #0f4a2b 0%, #082916 100%);
-  color: #ffffff;
-  padding: 22px 28px;
-  border-radius: 40px 40px 40px 40px;
+.hero-poster-card {
+  max-width: 480px;
   width: 100%;
-  max-width: 360px;
-  box-shadow: 0 10px 25px rgba(8, 41, 22, 0.35);
-  border: 3px dashed rgba(254, 195, 0, 0.7);
-  margin-bottom: 20px;
-}
-
-.badge-accent-stars {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  transform: translateY(-50%);
-  display: flex;
-  justify-content: space-between;
-  padding: 0 12px;
-  color: var(--c-yellow);
-  font-size: 1.2rem;
-  opacity: 0.85;
-}
-
-.cloud-inner-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.cloud-header-motif {
-  color: var(--c-yellow);
-  font-size: 1.1rem;
-  margin-bottom: 4px;
-}
-
-.cloud-main-uve {
-  font-size: 3.4rem;
-  line-height: 1;
-  color: #ffffff;
-  font-weight: 800;
-  text-shadow: 0 3px 6px rgba(0,0,0,0.4);
-  font-family: var(--font-ml);
-}
-
-.cloud-year-2026 {
-  font-size: 3rem;
-  font-weight: 900;
-  color: #ffffff;
-  line-height: 0.95;
-  letter-spacing: -1px;
-  font-family: var(--font-main);
-  text-shadow: 0 3px 6px rgba(0,0,0,0.4);
-}
-
-.cloud-sub-peruma {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: var(--c-yellow);
-  margin-top: 6px;
-  font-family: var(--font-ml);
-  letter-spacing: 0.5px;
-}
-
-/* Two-Tone Banner Pill from Poster */
-.poster-two-tone-pill {
-  width: 100%;
-  max-width: 370px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-  border-radius: 12px;
+  border-radius: 24px;
   overflow: hidden;
-  margin-bottom: 18px;
-}
-
-.pill-top-blue {
-  background: var(--c-pill-blue);
-  color: #ffffff;
-  padding: 6px 14px;
-  font-size: 1.15rem;
-  font-weight: 800;
-  font-family: var(--font-ml);
-}
-
-.pill-bottom-split {
-  display: flex;
-  width: 100%;
-}
-
-.pill-green-part {
-  background: var(--c-iuml-green);
-  color: #ffffff;
-  flex: 1;
-  padding: 6px 10px;
-  font-size: 1.1rem;
-  font-weight: 800;
-  font-family: var(--font-ml);
-}
-
-.pill-yellow-part {
-  background: var(--c-yellow);
-  color: var(--c-forest-dark);
-  flex: 2.2;
-  padding: 6px 12px;
-  font-size: 1.1rem;
-  font-weight: 900;
-  font-family: var(--font-ml);
-}
-
-/* Date & Venue Tags */
-.poster-event-details {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-  margin-bottom: 16px;
-}
-
-.event-detail-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: #f4faf6;
-  border: 1px solid #d4eadc;
-  padding: 8px 14px;
-  border-radius: var(--radius-md);
-  text-align: left;
-}
-
-.edi-icon {
-  width: 34px;
-  height: 34px;
-  background: var(--c-iuml-green);
-  color: #ffffff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.95rem;
-  flex-shrink: 0;
-}
-
-.edi-info strong {
-  display: block;
-  font-size: 0.95rem;
-  color: var(--c-forest-deep);
-}
-
-.edi-info span {
-  font-size: 0.74rem;
-  color: var(--c-text-muted);
-}
-
-/* Panchayats Ribbon from Poster */
-.poster-panchayats-ribbon {
-  background: #edf7f0;
-  color: var(--c-forest-deep);
-  border: 1px dashed var(--c-iuml-green);
-  border-radius: 8px;
-  padding: 7px 12px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 14px;
-}
-
-.btn-preview-original-poster {
-  background: transparent;
-  border: 1px solid var(--c-iuml-green);
-  color: var(--c-iuml-green);
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-size: 0.82rem;
-  font-weight: 600;
+  box-shadow: 0 16px 45px rgba(7, 37, 21, 0.22);
+  border: 4px solid #008751;
+  background: #0b361f;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.2s;
+  line-height: 0;
 }
 
-.btn-preview-original-poster:hover {
-  background: var(--c-iuml-green);
-  color: #ffffff;
+.hero-poster-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 22px 55px rgba(7, 37, 21, 0.3);
 }
+
+.hero-poster-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 
 /* RIGHT COLUMN: HERO INTRO & FEATURES */
 .hero-intro-column {
@@ -1566,11 +1369,13 @@ button, input, select, textarea {
   .hero-layout {
     grid-template-columns: 1fr;
     gap: 30px;
+    
   }
 
   .hero-poster-crest-column {
     display: flex;
     justify-content: center;
+    
   }
 
   .poster-crest-wrapper {
@@ -1912,3 +1717,225 @@ button, input, select, textarea {
   }
 }
 
+/* ==========================================================================
+   OPTIONAL FIELD BADGES & FRAMED PICTURE STYLES
+   ========================================================================== */
+.optional-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #3b6e51;
+  background: #e1f2e7;
+  border: 1px solid #b7dfc6;
+  padding: 2px 9px;
+  border-radius: 20px;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+.framed-photo-split-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  align-items: start;
+  margin-top: 15px;
+}
+
+@media (max-width: 860px) {
+  .framed-photo-split-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.frame-preview-title {
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: var(--c-forest-deep);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.photo-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* DELEGATE FRAMED PICTURE */
+.delegate-framed-picture-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.del-frame-outer {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  background: linear-gradient(145deg, #072515 0%, #0d4226 50%, #051d10 100%);
+  border: 8px solid #fec300;
+  outline: 2px solid #ffd214;
+  outline-offset: -5px;
+  border-radius: 18px;
+  box-shadow: 
+    0 14px 34px rgba(0, 0, 0, 0.32),
+    inset 0 0 14px rgba(0, 0, 0, 0.45);
+  padding: 18px 16px 14px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.del-frame-outer:hover {
+  transform: translateY(-2px);
+}
+
+/* Corner bolts */
+.frame-bolt {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #ffd214;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+.frame-bolt.tl { top: 4px; left: 4px; }
+.frame-bolt.tr { top: 4px; right: 4px; }
+.frame-bolt.bl { bottom: 4px; left: 4px; }
+.frame-bolt.br { bottom: 4px; right: 4px; }
+
+.del-frame-header {
+  margin-bottom: 10px;
+}
+.del-frame-crest {
+  color: #ffd214;
+  font-size: 1.1rem;
+  margin-bottom: 2px;
+}
+.del-frame-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #fec300;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.del-frame-sub {
+  font-family: 'Noto Sans Malayalam', sans-serif;
+  font-size: 0.68rem;
+  color: #c4ded0;
+}
+
+/* Photo Area */
+.del-frame-photo-area {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  background: #03140b;
+  border: 3px solid #ffd214;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.del-frame-photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.del-frame-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #8fad9a;
+  gap: 6px;
+}
+.frame-placeholder-icon {
+  font-size: 3rem;
+  color: #244e33;
+}
+
+/* Gilded Brass Nameplate */
+.del-frame-nameplate {
+  margin-top: 12px;
+  width: 100%;
+  background: linear-gradient(180deg, #fff3cc 0%, #ffd214 50%, #d89b00 100%);
+  border: 2px solid #072515;
+  border-radius: 8px;
+  padding: 6px 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+}
+.nameplate-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #072515;
+  line-height: 1.25;
+  word-break: break-word;
+}
+.nameplate-meta {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #174223;
+  margin-top: 2px;
+}
+.nameplate-reg-id {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #3b2c00;
+  font-family: monospace;
+  margin-top: 2px;
+}
+
+.del-frame-footer {
+  margin-top: 8px;
+  font-size: 0.62rem;
+  color: #8fad9a;
+  letter-spacing: 0.3px;
+}
+
+.btn-framed-download {
+  margin-top: 14px;
+  background: linear-gradient(135deg, #fec300 0%, #e0a300 100%);
+  color: #072515;
+  font-weight: 700;
+  font-size: 0.84rem;
+  padding: 9px 18px;
+  border-radius: 8px;
+  border: none;
+  box-shadow: 0 4px 12px rgba(254, 195, 0, 0.35);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-framed-download:hover {
+  background: #ffd214;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(254, 195, 0, 0.45);
+}
+
+.success-framed-showcase {
+  margin: 18px 0 24px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.framed-showcase-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--c-forest-deep);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

@@ -1,3 +1,5 @@
+import DelegatePhotoFrame from './DelegatePhotoFrame'
+
 export default function SuccessModal({ data, onClose, onSubmitAnother }) {
   if (!data) return null
 
@@ -28,6 +30,22 @@ export default function SuccessModal({ data, onClose, onSubmitAnother }) {
               Registration ID: <strong>{data.registrationId}</strong>
             </div>
           )}
+
+          {/* Framed Picture Showcase */}
+          <div className="success-framed-showcase">
+            <h4 className="framed-showcase-title">
+              <i className="fa-solid fa-award"></i> Official Delegate Framed Pass
+              <small className="ml-sub">(ഔദ്യോഗിക ഫ്രെയിം ചെയ്ത ചിത്രം)</small>
+            </h4>
+            <DelegatePhotoFrame
+              photoUrl={data.photoUrl}
+              name={data.fullName}
+              locality={data.place}
+              unit={data.unit}
+              registrationId={data.registrationId}
+              showDownload={true}
+            />
+          </div>
 
           <div className="submitted-summary-card">
             <div className="summary-header">
@@ -60,18 +78,16 @@ export default function SuccessModal({ data, onClose, onSubmitAnother }) {
                 <span className="s-label">Unit / Branch (യൂണിറ്റ്)</span>
                 <span className="s-value">{data.unit}</span>
               </div>
-              <div className="summary-item">
-                <span className="s-label">Work / Occupation (തൊഴിൽ)</span>
-                <span className="s-value">{data.work}</span>
-              </div>
-              <div className="summary-item">
-                <span className="s-label">Qualification (വിദ്യാഭ്യാസം)</span>
-                <span className="s-value">{data.qualification}</span>
-              </div>
-              {data.photoUrl && (
-                <div className="summary-item" style={{gridColumn:'span 2'}}>
-                  <span className="s-label">Photo (ഫോട്ടോ)</span>
-                  <img src={data.photoUrl} alt="Delegate" style={{width:60,height:75,objectFit:'cover',borderRadius:6,marginTop:4,border:'2px solid #008751'}}/>
+              {data.work && (
+                <div className="summary-item">
+                  <span className="s-label">Work / Occupation (തൊഴിൽ)</span>
+                  <span className="s-value">{data.work}</span>
+                </div>
+              )}
+              {data.qualification && (
+                <div className="summary-item">
+                  <span className="s-label">Qualification (വിദ്യാഭ്യാസം)</span>
+                  <span className="s-value">{data.qualification}</span>
                 </div>
               )}
             </div>

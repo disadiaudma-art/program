@@ -456,7 +456,7 @@ export default function RegistrationForm({ onSuccess }) {
                   name={form.fullName}
                   locality={form.place}
                   unit={form.unit === 'Other' ? (form.customUnit || 'Other') : form.unit}
-                  showDownload={Boolean(photoPreview)}
+                  showDownload={true}
                 />
               </div>
             </div>

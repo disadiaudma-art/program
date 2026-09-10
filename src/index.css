@@ -21,7 +21,7 @@
   --c-text: #13241a;
   --c-text-muted: #4e6b5a;
   --c-danger: #d93025;
-  
+
   /* Radii & Shadows */
   --radius-sm: 8px;
   --radius-md: 14px;
@@ -36,7 +36,9 @@
   --font-ml: 'Manjari', 'Noto Sans Malayalam', sans-serif;
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -56,7 +58,7 @@ body {
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
-  background-image: 
+  background-image:
     radial-gradient(circle at 12% 15%, rgba(0, 135, 81, 0.06) 0%, transparent 40%),
     radial-gradient(circle at 88% 85%, rgba(254, 195, 0, 0.07) 0%, transparent 45%);
 }
@@ -68,7 +70,10 @@ body {
   padding: 0 20px;
 }
 
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   font-family: var(--font-main);
   font-weight: 700;
   color: var(--c-forest-deep);
@@ -117,7 +122,10 @@ a {
   color: inherit;
 }
 
-button, input, select, textarea {
+button,
+input,
+select,
+textarea {
   font-family: inherit;
 }
 
@@ -641,8 +649,8 @@ button, input, select, textarea {
   box-shadow: 0 0 0 3.5px rgba(0, 135, 81, 0.15);
 }
 
-.input-wrap input:focus + .input-icon,
-.input-wrap select:focus + .input-icon {
+.input-wrap input:focus+.input-icon,
+.input-wrap select:focus+.input-icon {
   color: var(--c-iuml-green);
 }
 
@@ -1253,8 +1261,15 @@ button, input, select, textarea {
 }
 
 @keyframes popSuccess {
-  0% { transform: scale(0.6); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .success-title-main {
@@ -1352,6 +1367,7 @@ button, input, select, textarea {
    PRINT STYLES
    ========================================================================== */
 @media print {
+
   .site-header,
   .poster-hero,
   .venue-guide-section,
@@ -1369,13 +1385,13 @@ button, input, select, textarea {
   .hero-layout {
     grid-template-columns: 1fr;
     gap: 30px;
-    
+
   }
 
   .hero-poster-crest-column {
     display: flex;
     justify-content: center;
-    
+
   }
 
   .poster-crest-wrapper {
@@ -1386,7 +1402,8 @@ button, input, select, textarea {
     grid-template-columns: 1fr;
   }
 
-  .span-2, .span-3 {
+  .span-2,
+  .span-3 {
     grid-column: span 1;
   }
 
@@ -1542,7 +1559,7 @@ button, input, select, textarea {
 .admin-toggle-btn.active {
   background: #fff;
   color: var(--c-iuml-green);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 .admin-table-desktop {
@@ -1659,30 +1676,37 @@ button, input, select, textarea {
   .admin-table-desktop {
     display: none;
   }
+
   .admin-cards-mobile {
     display: block;
   }
+
   .admin-filter-search,
   .admin-filter-panchayat {
     flex: 1 1 100%;
     min-width: 100%;
   }
+
   .admin-filter-btns {
     width: 100%;
     display: flex;
     gap: 8px;
   }
+
   .admin-filter-btns .btn {
     flex: 1;
     justify-content: center;
   }
+
   .admin-header-inner {
     flex-direction: column;
     align-items: flex-start;
   }
+
   .admin-header-inner .btn {
     align-self: flex-start;
   }
+
   .admin-card-box {
     padding: 16px;
   }
@@ -1693,24 +1717,30 @@ button, input, select, textarea {
     grid-template-columns: 1fr 1fr;
     gap: 10px;
   }
+
   .admin-stat-card {
     padding: 14px 10px;
   }
+
   .admin-stat-num {
     font-size: 1.6rem;
   }
+
   .admin-stat-lbl {
     font-size: 0.75rem;
   }
+
   .admin-container {
     padding-left: 12px;
     padding-right: 12px;
     padding-top: 16px;
   }
+
   .admin-card-box {
     padding: 14px 12px;
     border-radius: 12px;
   }
+
   .dmc-grid {
     grid-template-columns: 1fr;
     gap: 6px;
@@ -1764,7 +1794,7 @@ button, input, select, textarea {
   margin-top: 8px;
 }
 
-/* DELEGATE FRAMED PICTURE */
+/* OFFICIAL DELEGATE CAMPAIGN FRAME */
 .delegate-framed-picture-wrapper {
   display: flex;
   flex-direction: column;
@@ -1772,134 +1802,107 @@ button, input, select, textarea {
   width: 100%;
 }
 
-.del-frame-outer {
+.official-frame-container {
   position: relative;
   width: 100%;
   max-width: 320px;
-  background: linear-gradient(145deg, #072515 0%, #0d4226 50%, #051d10 100%);
-  border: 8px solid #fec300;
-  outline: 2px solid #ffd214;
-  outline-offset: -5px;
-  border-radius: 18px;
-  box-shadow: 
-    0 14px 34px rgba(0, 0, 0, 0.32),
-    inset 0 0 14px rgba(0, 0, 0, 0.45);
-  padding: 18px 16px 14px 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  transition: transform 0.3s ease;
-}
-
-.del-frame-outer:hover {
-  transform: translateY(-2px);
-}
-
-/* Corner bolts */
-.frame-bolt {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  background: #ffd214;
-  border-radius: 50%;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-}
-.frame-bolt.tl { top: 4px; left: 4px; }
-.frame-bolt.tr { top: 4px; right: 4px; }
-.frame-bolt.bl { bottom: 4px; left: 4px; }
-.frame-bolt.br { bottom: 4px; right: 4px; }
-
-.del-frame-header {
-  margin-bottom: 10px;
-}
-.del-frame-crest {
-  color: #ffd214;
-  font-size: 1.1rem;
-  margin-bottom: 2px;
-}
-.del-frame-title {
-  font-size: 0.72rem;
-  font-weight: 800;
-  color: #fec300;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-.del-frame-sub {
-  font-family: 'Noto Sans Malayalam', sans-serif;
-  font-size: 0.68rem;
-  color: #c4ded0;
-}
-
-/* Photo Area */
-.del-frame-photo-area {
-  position: relative;
-  width: 100%;
-  height: 220px;
-  background: #03140b;
-  border: 3px solid #ffd214;
-  border-radius: 8px;
+  aspect-ratio: 819 / 1024;
+  border-radius: 14px;
   overflow: hidden;
-  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.65);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  box-shadow: 
+    0 12px 30px rgba(0, 0, 0, 0.28),
+    0 2px 8px rgba(0, 0, 0, 0.12);
+  background: #0f2719;
+  user-select: none;
+  border: 2px solid #ecd572;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
 }
-.del-frame-photo-img {
+
+.official-frame-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 16px 36px rgba(0, 0, 0, 0.35),
+    0 0 16px rgba(254, 205, 8, 0.3);
+}
+
+.official-frame-bg {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
-.del-frame-placeholder {
+
+.official-frame-photo-slot {
+  position: absolute;
+  left: 9.8%;
+  top: 55%;
+  width: 33.8%;
+  height: 34.2%;
+  border-radius: 9%;
+  overflow: hidden;
+  background: #ffffff;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #8fad9a;
-  gap: 6px;
-}
-.frame-placeholder-icon {
-  font-size: 3rem;
-  color: #244e33;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Gilded Brass Nameplate */
-.del-frame-nameplate {
-  margin-top: 12px;
+.official-frame-user-img {
   width: 100%;
-  background: linear-gradient(180deg, #fff3cc 0%, #ffd214 50%, #d89b00 100%);
-  border: 2px solid #072515;
-  border-radius: 8px;
-  padding: 6px 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-}
-.nameplate-name {
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: #072515;
-  line-height: 1.25;
-  word-break: break-word;
-}
-.nameplate-meta {
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: #174223;
-  margin-top: 2px;
-}
-.nameplate-reg-id {
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: #3b2c00;
-  font-family: monospace;
-  margin-top: 2px;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
 }
 
-.del-frame-footer {
-  margin-top: 8px;
-  font-size: 0.62rem;
-  color: #8fad9a;
-  letter-spacing: 0.3px;
+.official-frame-avatar-box {
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8%;
+}
+
+.official-frame-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.official-frame-name-pill {
+  position: absolute;
+  left: 49%;
+  top: 83.15%;
+  width: 44%;
+  height: 4.4%;
+  background: rgb(252, 227, 60);
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+  border: none;
+  overflow: hidden;
+  z-index: 2;
+  text-align: center;
+}
+
+.official-name-text {
+  font-weight: 800;
+  color: #000000;
+  white-space: nowrap;
+  text-align: center;
+  font-family: var(--font-main), 'Noto Sans Malayalam', 'Manjari', sans-serif;
+  letter-spacing: 0.2px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
 .btn-framed-download {
@@ -1907,21 +1910,33 @@ button, input, select, textarea {
   background: linear-gradient(135deg, #fec300 0%, #e0a300 100%);
   color: #072515;
   font-weight: 700;
-  font-size: 0.84rem;
-  padding: 9px 18px;
+  font-size: 0.86rem;
+  padding: 10px 20px;
   border-radius: 8px;
   border: none;
-  box-shadow: 0 4px 12px rgba(254, 195, 0, 0.35);
+  box-shadow: 0 4px 14px rgba(254, 195, 0, 0.35);
   cursor: pointer;
   transition: all 0.25s ease;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
 }
+
 .btn-framed-download:hover {
   background: #ffd214;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(254, 195, 0, 0.45);
+  box-shadow: 0 6px 18px rgba(254, 195, 0, 0.45);
+}
+
+.btn-framed-download:disabled {
+  opacity: 0.7;
+  cursor: wait;
+  transform: none;
+}
+
+.btn-dl-text {
+  font-weight: 700;
 }
 
 .success-framed-showcase {
@@ -1929,7 +1944,9 @@ button, input, select, textarea {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 }
+
 .framed-showcase-title {
   font-size: 1.05rem;
   font-weight: 700;

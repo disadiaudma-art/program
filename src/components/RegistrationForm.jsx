@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import { submitDelegate, uploadPhoto } from '../api/api'
 import DelegatePhotoFrame from './DelegatePhotoFrame'
+import ImageAdjustModal from './ImageAdjustModal'
 
 const PANCHAYATS = [
   { value: 'കോടോംബേളൂർ', label: 'കോടോംബേളൂർ (Kodom-Belur)' },
@@ -31,6 +32,8 @@ export default function RegistrationForm({ onSuccess }) {
   const [photoUploading, setPhotoUploading] = useState(false)
   const [photoError, setPhotoError] = useState('')
   const [dragOver, setDragOver] = useState(false)
+  const [showAdjustModal, setShowAdjustModal] = useState(false)
+  const [photoAdjust, setPhotoAdjust] = useState({ zoom: 1, offsetX: 0, offsetY: 0 })
   const fileInputRef = useRef()
   const cameraInputRef = useRef()
 
@@ -95,6 +98,8 @@ export default function RegistrationForm({ onSuccess }) {
     setPhotoError('')
     setPhotoPreview(URL.createObjectURL(file))
     setPhoto(file)
+    setPhotoAdjust({ zoom: 1, offsetX: 0, offsetY: 0 })
+    setShowAdjustModal(true)
   }
 
   function handleFileInput(e) { handlePhotoFile(e.target.files[0]) }
@@ -106,6 +111,7 @@ export default function RegistrationForm({ onSuccess }) {
     setPhoto(null)
     setPhotoPreview(null)
     setPhotoError('')
+    setPhotoAdjust({ zoom: 1, offsetX: 0, offsetY: 0 })
     if (fileInputRef.current) fileInputRef.current.value = ''
     if (cameraInputRef.current) cameraInputRef.current.value = ''
   }
@@ -422,11 +428,24 @@ export default function RegistrationForm({ onSuccess }) {
                       <div className="photo-crop-frame">
                         <img src={photoPreview} alt="Preview"/>
                         <div className="verified-checkmark"><i className="fa-solid fa-check"></i></div>
+                        {/* Adjust icon overlay */}
+                        <button
+                          type="button"
+                          className="photo-adjust-trigger-btn"
+                          onClick={() => setShowAdjustModal(true)}
+                          title="Adjust photo position &amp; zoom"
+                          aria-label="Adjust photo"
+                        >
+                          <i className="fa-solid fa-sliders" />
+                        </button>
                       </div>
                       <div className="photo-badge-details">
                         <div className="status-ready-pill"><i className="fa-solid fa-circle-check"></i> Photo Selected</div>
                         <p className="photo-meta">Displayed in your framed picture</p>
                         <div className="photo-action-buttons">
+                          <button type="button" className="btn btn-outline btn-sm" onClick={() => setShowAdjustModal(true)}>
+                            <i className="fa-solid fa-sliders"></i> Adjust
+                          </button>
                           <button type="button" className="btn btn-outline btn-sm" onClick={() => fileInputRef.current.click()}>
                             <i className="fa-solid fa-arrows-rotate"></i> Change
                           </button>
@@ -457,6 +476,7 @@ export default function RegistrationForm({ onSuccess }) {
                   locality={form.place}
                   unit={form.unit === 'Other' ? (form.customUnit || 'Other') : form.unit}
                   showDownload={true}
+                  photoAdjust={photoAdjust}
                 />
               </div>
             </div>
@@ -480,6 +500,16 @@ export default function RegistrationForm({ onSuccess }) {
 
         </form>
       </div>
+
+      {/* Image Adjust Modal */}
+      {showAdjustModal && photoPreview && (
+        <ImageAdjustModal
+          src={photoPreview}
+          initial={photoAdjust}
+          onApply={adj => setPhotoAdjust(adj)}
+          onClose={() => setShowAdjustModal(false)}
+        />
+      )}
     </main>
   )
 }

@@ -9,9 +9,11 @@ export default function DelegatePhotoFrame({
   locality,
   unit,
   registrationId,
-  showDownload = true
+  showDownload = true,
+  photoAdjust  // { zoom, offsetX, offsetY } from ImageAdjustModal
 }) {
   const [downloading, setDownloading] = useState(false)
+  const [fitMode, setFitMode] = useState('cover') // 'cover' | 'contain'
   const displayName = name?.trim() || 'Your Name'
 
   // Dynamic font sizing for wider yellow pill
@@ -95,21 +97,56 @@ export default function DelegatePhotoFrame({
       ctx.roundRect(photoX, photoY, photoW, photoH, photoRadius)
       ctx.clip()
 
-      // Calculate object-fit: cover
       const imgRatio = img.width / img.height
       const targetRatio = photoW / photoH
       let dw, dh, dx, dy
 
-      if (imgRatio > targetRatio) {
-        dh = photoH
-        dw = photoH * imgRatio
-        dx = photoX - (dw - photoW) / 2
-        dy = photoY
+      // If user applied adjustments via ImageAdjustModal, honour them
+      const adjZoom    = photoAdjust?.zoom    ?? 1
+      const adjOffsetX = photoAdjust?.offsetX ?? 0
+      const adjOffsetY = photoAdjust?.offsetY ?? 0
+      const hasAdj = adjZoom !== 1 || adjOffsetX !== 0 || adjOffsetY !== 0
+
+      if (hasAdj) {
+        // Base cover, then apply zoom & pan from adjust modal
+        if (imgRatio > targetRatio) {
+          dh = photoH
+          dw = photoH * imgRatio
+        } else {
+          dw = photoW
+          dh = photoW / imgRatio
+        }
+        dw *= adjZoom
+        dh *= adjZoom
+        // Center + user pan offset
+        dx = photoX + (photoW - dw) / 2 + adjOffsetX
+        dy = photoY + (photoH - dh) / 2 + adjOffsetY
+      } else if (fitMode === 'contain') {
+        // object-fit: contain — show full image, letterboxed
+        if (imgRatio > targetRatio) {
+          dw = photoW
+          dh = photoW / imgRatio
+          dx = photoX
+          dy = photoY + (photoH - dh) / 2
+        } else {
+          dh = photoH
+          dw = photoH * imgRatio
+          dx = photoX + (photoW - dw) / 2
+          dy = photoY
+        }
       } else {
-        dw = photoW
-        dh = photoW / imgRatio
-        dx = photoX
-        dy = photoY - (dh - photoH) / 2
+        // object-fit: cover — fill the slot
+        if (imgRatio > targetRatio) {
+          dh = photoH
+          dw = photoH * imgRatio
+          dx = photoX - (dw - photoW) / 2
+          dy = photoY
+        } else {
+          dw = photoW
+          dh = photoW / imgRatio
+          dx = photoX
+          dy = photoY - (dh - photoH) / 2
+        }
       }
 
       ctx.drawImage(img, dx, dy, dw, dh)
@@ -205,7 +242,31 @@ export default function DelegatePhotoFrame({
         {/* Person's Picture Area (Auto-populated from upload input) */}
         <div className="official-frame-photo-slot">
           {photoUrl ? (
-            <img src={photoUrl} alt={displayName} className="official-frame-user-img" />
+            <>
+              <img
+                src={photoUrl}
+                alt={displayName}
+                className="official-frame-user-img"
+                style={photoAdjust && (photoAdjust.zoom !== 1 || photoAdjust.offsetX !== 0 || photoAdjust.offsetY !== 0)
+                  ? {
+                      objectFit: 'cover',
+                      transform: `translate(${photoAdjust.offsetX * 0.39}px, ${photoAdjust.offsetY * 0.31}px) scale(${photoAdjust.zoom})`,
+                      transformOrigin: 'center center',
+                    }
+                  : { objectFit: fitMode }
+                }
+              />
+              {/* Expand/Fit toggle icon — bottom-left of photo slot */}
+              <button
+                type="button"
+                className="frame-fit-toggle-btn"
+                onClick={() => setFitMode(m => m === 'cover' ? 'contain' : 'cover')}
+                title={fitMode === 'cover' ? 'Fit full image in frame' : 'Fill frame with image'}
+                aria-label={fitMode === 'cover' ? 'Fit full image in frame' : 'Fill frame with image'}
+              >
+                <i className={`fa-solid ${fitMode === 'cover' ? 'fa-expand' : 'fa-compress'}`} />
+              </button>
+            </>
           ) : (
             <div className="official-frame-avatar-box">
               <img src={avatarPlaceholderImg} alt="Default Avatar" className="official-frame-avatar-img" />

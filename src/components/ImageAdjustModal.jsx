@@ -101,8 +101,9 @@ export default function ImageAdjustModal({ src, onApply, onClose, initial }) {
   }, [])
 
   const previewStyle = {
-    width:  FRAME_W,
-    height: FRAME_H,
+    width: 'min(100%, 277px)',
+    height: 'auto',
+    aspectRatio: `${FRAME_W} / ${FRAME_H}`,
     overflow: 'hidden',
     position: 'relative',
     cursor: isDragging ? 'grabbing' : 'grab',

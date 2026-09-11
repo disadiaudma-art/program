@@ -243,19 +243,21 @@ export default function DelegatePhotoFrame({
         <div className="official-frame-photo-slot">
           {photoUrl ? (
             <>
-              <img
-                src={photoUrl}
-                alt={displayName}
-                className="official-frame-user-img"
-                style={photoAdjust && (photoAdjust.zoom !== 1 || photoAdjust.offsetX !== 0 || photoAdjust.offsetY !== 0)
-                  ? {
-                      objectFit: 'cover',
-                      transform: `translate(${photoAdjust.offsetX * 0.39}px, ${photoAdjust.offsetY * 0.31}px) scale(${photoAdjust.zoom})`,
-                      transformOrigin: 'center center',
-                    }
-                  : { objectFit: fitMode }
-                }
-              />
+              <div className="official-frame-photo-viewport">
+                <img
+                  src={photoUrl}
+                  alt={displayName}
+                  className="official-frame-user-img"
+                  style={photoAdjust && (photoAdjust.zoom !== 1 || photoAdjust.offsetX !== 0 || photoAdjust.offsetY !== 0)
+                    ? {
+                        objectFit: 'cover',
+                        transform: `translate(${photoAdjust.offsetX * 0.39}px, ${photoAdjust.offsetY * 0.31}px) scale(${photoAdjust.zoom})`,
+                        transformOrigin: 'center center',
+                      }
+                    : { objectFit: fitMode }
+                  }
+                />
+              </div>
               {/* Expand/Fit toggle icon — bottom-left of photo slot */}
               <button
                 type="button"

@@ -156,8 +156,8 @@ export default function RegistrationForm({ onSuccess }) {
         place: form.place.trim(),
         panchayat: panchayatVal,
         unit: unitVal,
-        work: form.work?.trim() || '',
-        qualification: form.qualification?.trim() || '',
+        work: form.work?.trim() || null,
+        qualification: form.qualification?.trim() || null,
         photoUrl,
         photoPublicId,
       }

@@ -12,7 +12,7 @@ export default function Footer() {
         </div>
         <div className="footer-contact-details">
           <div><i className="fa-solid fa-location-dot"></i> Venue: Royal Palace Auditorium, Parappa</div>
-          <div><i className="fa-regular fa-calendar-check"></i> Saturday, 26 September 2026</div>
+          <div><i className="fa-regular fa-calendar-check"></i> Sunday, 27 September 2026</div>
         </div>
       </div>
       <div className="footer-bottom-line">

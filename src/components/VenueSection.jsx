@@ -8,8 +8,8 @@ export default function VenueSection() {
           </div>
           <h2>Royal Palace Auditorium, Parappa</h2>
           <p>
-            Saturday, September 26, 2026 • 9:00 AM to 6:00 PM
-            <span className="ml-sub d-block">2026 സെപ്റ്റംബർ 26 ശനിയാഴ്ച രാവിലെ 9:00 മുതൽ വൈകുന്നേരം 6:00 വരെ</span>
+            Sunday, September 27, 2026
+            <span className="ml-sub d-block">2026 സെപ്റ്റംബർ 27 ഞായറാഴ്ച </span>
           </p>
         </div>
 

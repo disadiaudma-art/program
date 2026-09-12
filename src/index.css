@@ -245,6 +245,8 @@ textarea {
   padding: 7px 14px;
   font-size: 0.82rem;
   border-radius: 8px;
+  color: #000;
+  border: 2px solid black;
 }
 
 .btn-primary {
@@ -271,12 +273,12 @@ textarea {
 .btn-outline {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.3);
-  color: #ffffff;
+  color: #000000;
 }
 
 .btn-outline:hover {
   background: rgba(255, 255, 255, 0.15);
-  border-color: #ffffff;
+  border-color: #0a0a0a;
 }
 
 .btn-admin-nav {

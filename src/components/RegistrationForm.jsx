@@ -446,9 +446,7 @@ export default function RegistrationForm({ onSuccess }) {
                           <button type="button" className="btn btn-outline btn-sm" onClick={() => setShowAdjustModal(true)}>
                             <i className="fa-solid fa-sliders"></i> Adjust
                           </button>
-                          <button type="button" className="btn btn-outline btn-sm" onClick={() => fileInputRef.current.click()}>
-                            <i className="fa-solid fa-arrows-rotate"></i> Change
-                          </button>
+                          
                           <button type="button" className="btn-clear-photo" onClick={clearPhoto}>
                             <i className="fa-solid fa-trash"></i> Remove
                           </button>

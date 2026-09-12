@@ -13,7 +13,7 @@ export function useCountdown() {
 
   useEffect(() => {
     function update() {
-      const eventDate = new Date('2026-09-26T09:00:00+05:30').getTime()
+      const eventDate = new Date('2026-09-27T09:00:00+05:30').getTime()
       const now = Date.now()
       const diff = eventDate - now
 

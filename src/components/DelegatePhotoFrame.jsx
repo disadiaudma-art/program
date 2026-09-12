@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import frameTemplateImg from '../assets/frame-template.jpg'
+import frameTemplateImg from '../assets/Frame.jpeg'
 import avatarPlaceholderImg from '../assets/avatar-placeholder.png'
 
 export default function DelegatePhotoFrame({
@@ -96,6 +96,8 @@ export default function DelegatePhotoFrame({
       ctx.beginPath()
       ctx.roundRect(photoX, photoY, photoW, photoH, photoRadius)
       ctx.clip()
+      ctx.fillStyle = '#ffffff'
+      ctx.fillRect(photoX, photoY, photoW, photoH)
 
       const imgRatio = img.width / img.height
       const targetRatio = photoW / photoH
@@ -119,8 +121,12 @@ export default function DelegatePhotoFrame({
         dw *= adjZoom
         dh *= adjZoom
         // Center + user pan offset
-        dx = photoX + (photoW - dw) / 2 + adjOffsetX
-        dy = photoY + (photoH - dh) / 2 + adjOffsetY
+        const maxOffsetX = Math.max(0, (dw - photoW) / 2)
+        const maxOffsetY = Math.max(0, (dh - photoH) / 2)
+        const safeOffsetX = Math.max(-maxOffsetX, Math.min(maxOffsetX, adjOffsetX))
+        const safeOffsetY = Math.max(-maxOffsetY, Math.min(maxOffsetY, adjOffsetY))
+        dx = photoX + (photoW - dw) / 2 + safeOffsetX
+        dy = photoY + (photoH - dh) / 2 + safeOffsetY
       } else if (fitMode === 'contain') {
         // object-fit: contain — show full image, letterboxed
         if (imgRatio > targetRatio) {
@@ -251,10 +257,11 @@ export default function DelegatePhotoFrame({
                   style={photoAdjust && (photoAdjust.zoom !== 1 || photoAdjust.offsetX !== 0 || photoAdjust.offsetY !== 0)
                     ? {
                         objectFit: 'cover',
-                        transform: `translate(${photoAdjust.offsetX * 0.39}px, ${photoAdjust.offsetY * 0.31}px) scale(${photoAdjust.zoom})`,
+                        objectPosition: 'center center',
+                        transform: `translate(${(photoAdjust.offsetX / 277) * 100}%, ${(photoAdjust.offsetY / 350) * 100}%) scale(${photoAdjust.zoom})`,
                         transformOrigin: 'center center',
                       }
-                    : { objectFit: fitMode }
+                    : { objectFit: fitMode, objectPosition: 'center center' }
                   }
                 />
               </div>
@@ -278,7 +285,7 @@ export default function DelegatePhotoFrame({
 
         {/* Dynamic Yellow Name Pill (Displays full name dynamically) */}
         <div className="official-frame-name-pill" title={displayName}>
-          <span className="official-name-text" style={{ fontSize: dynamicFontSize }}>
+          <span className="official-name-text" style={{ fontSize: 10, fontWeight: 600 }}>
             {displayName}
           </span>
         </div>

@@ -6,7 +6,7 @@ export default function Header() {
   return (
     <header className="site-header transparent-header">
       <div className="header-inner header-center-only">
-        <div className="header-timer-pill" title="Event Countdown: September 26, 2026">
+        <div className="header-timer-pill" title="Event Countdown: September 27, 2026">
           <i className="fa-regular fa-clock timer-pill-icon"></i>
           {isEventToday ? (
             <span className="timer-today-text">Event Today! • ഇന്ന് സംഗമ ദിനം!</span>

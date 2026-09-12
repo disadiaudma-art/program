@@ -15,11 +15,25 @@ export default function ImageAdjustModal({ src, onApply, onClose, initial }) {
   const [zoom, setZoom]       = useState(initial?.zoom    ?? 1)
   const [offsetX, setOffsetX] = useState(initial?.offsetX ?? 0)
   const [offsetY, setOffsetY] = useState(initial?.offsetY ?? 0)
+  const [imageAspect, setImageAspect] = useState(FRAME_W / FRAME_H)
   const [isDragging, setIsDragging] = useState(false)
 
   const dragging   = useRef(false)
   const lastPos    = useRef({ x: 0, y: 0 })
   const imgRef     = useRef()
+
+  function getMaxOffsets(nextZoom = zoom, aspect = imageAspect) {
+    const baseWidth = aspect > FRAME_W / FRAME_H ? FRAME_H * aspect : FRAME_W
+    const baseHeight = aspect > FRAME_W / FRAME_H ? FRAME_H : FRAME_W / aspect
+    return {
+      x: Math.max(0, (baseWidth * nextZoom - FRAME_W) / 2),
+      y: Math.max(0, (baseHeight * nextZoom - FRAME_H) / 2),
+    }
+  }
+
+  function clampOffset(value, max) {
+    return Math.max(-max, Math.min(max, value))
+  }
 
   // ── pointer drag ──────────────────────────────────────────────────────────
   const onPointerDown = useCallback((e) => {
@@ -34,19 +48,14 @@ export default function ImageAdjustModal({ src, onApply, onClose, initial }) {
     const dx = e.clientX - lastPos.current.x
     const dy = e.clientY - lastPos.current.y
     lastPos.current = { x: e.clientX, y: e.clientY }
+    const maxOffsets = getMaxOffsets()
     setOffsetX(ox => {
-      const newOx = ox + dx
-      const scaledW = FRAME_W * zoom
-      const maxX = (scaledW - FRAME_W) / 2
-      return Math.max(-maxX, Math.min(maxX, newOx))
+      return clampOffset(ox + dx, maxOffsets.x)
     })
     setOffsetY(oy => {
-      const newOy = oy + dy
-      const scaledH = FRAME_H * zoom
-      const maxY = (scaledH - FRAME_H) / 2
-      return Math.max(-maxY, Math.min(maxY, newOy))
+      return clampOffset(oy + dy, maxOffsets.y)
     })
-  }, [zoom])
+  }, [zoom, imageAspect])
 
   const onPointerUp = useCallback((e) => {
     dragging.current = false
@@ -59,16 +68,11 @@ export default function ImageAdjustModal({ src, onApply, onClose, initial }) {
   // ── zoom slider ───────────────────────────────────────────────────────────
   function handleZoomChange(e) {
     const z = parseFloat(e.target.value)
+    const maxOffsets = getMaxOffsets(z)
     setZoom(z)
     // re-clamp offsets with new zoom
-    setOffsetX(ox => {
-      const maxX = (FRAME_W * z - FRAME_W) / 2
-      return Math.max(-maxX, Math.min(maxX, ox))
-    })
-    setOffsetY(oy => {
-      const maxY = (FRAME_H * z - FRAME_H) / 2
-      return Math.max(-maxY, Math.min(maxY, oy))
-    })
+    setOffsetX(ox => clampOffset(ox, maxOffsets.x))
+    setOffsetY(oy => clampOffset(oy, maxOffsets.y))
   }
 
   // ── reset ─────────────────────────────────────────────────────────────────
@@ -159,7 +163,19 @@ export default function ImageAdjustModal({ src, onApply, onClose, initial }) {
               onPointerUp={onPointerUp}
               onPointerCancel={onPointerUp}
             >
-              <img ref={imgRef} src={src} alt="Adjust preview" style={imgStyle} />
+              <img
+                ref={imgRef}
+                src={src}
+                alt="Adjust preview"
+                style={imgStyle}
+                onLoad={event => {
+                  const aspect = event.currentTarget.naturalWidth / event.currentTarget.naturalHeight
+                  setImageAspect(aspect)
+                  const maxOffsets = getMaxOffsets(zoom, aspect)
+                  setOffsetX(offset => clampOffset(offset, maxOffsets.x))
+                  setOffsetY(offset => clampOffset(offset, maxOffsets.y))
+                }}
+              />
               {/* corner guide marks */}
               <div className="adj-guide adj-guide-tl" />
               <div className="adj-guide adj-guide-tr" />
